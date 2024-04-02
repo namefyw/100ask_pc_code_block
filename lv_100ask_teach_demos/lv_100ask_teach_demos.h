@@ -65,6 +65,8 @@ extern "C" {
 #include "src/lv_100ask_demo_course_x_1_1/lv_100ask_demo_course_x_1_1.h"    // 拓展部分：通过 FontAwesome 添加新图标SYMBOLS
 
 
+#include "src/lv_my_demo_test/lv_my_demo_test.h"
+
 /*********************
  *      DEFINES
  *********************/

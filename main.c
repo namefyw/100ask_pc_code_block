@@ -58,7 +58,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
 
 
     /*Run the demo*/
-    lv_100ask_demo_course_2_1_1();      // 基础对象(lv_obj)，"Hello, LVGL!"
+    // lv_100ask_demo_course_2_1_1();      // 基础对象(lv_obj)，"Hello, LVGL!"
 	//lv_100ask_demo_course_2_2_2();    // 基础对象的大小(size)
 	//lv_100ask_demo_course_2_2_3();    // 基础对象的位置(position)
 	//lv_100ask_demo_course_2_2_4();    // 基础对象的盒子模型(border-box)
@@ -90,7 +90,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
     //lv_100ask_demo_course_6_4_1();    // 第三方库(freeType)：通过freeType显示字体 (需要先在 lv_conf.h 中打开  LV_USE_FREETYPE)
 
     //lv_100ask_demo_course_x_1_1();    // 拓展高级学习：基于FontAwesome 添加新图标SYMBOLS，进入函数查看详细说明 (需要先在 lv_conf.h 中打开  LV_USE_FREETYPE)
-
+    lv_my_demo_1();
 
     while(!lv_win32_quit_signal) {
         /* Periodically call the lv_task handler.

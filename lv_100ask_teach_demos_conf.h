@@ -60,6 +60,7 @@
 #define LV_USE_100ASK_DEMO_COURSE_X_1_1      0
 #endif
 
+#define LV_MY_DEMO_1                         1
 
 #endif /*LV_100ASK_TEACH_DEMOS_CONF_H*/
 
