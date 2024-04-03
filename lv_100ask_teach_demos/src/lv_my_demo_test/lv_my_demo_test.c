@@ -3,10 +3,25 @@
 #include "lv_my_demo_test.h"
 #include <time.h>
 
-#define COLOR_RED lv_color_hex(0xFFFF0000)
-#define COLOR_GREEN lv_color_hex(0xFF008000)
-#define COLOR_BLUE lv_color_hex(0xFF0000FF)
-#define COLOR_WHITE lv_color_hex(0xFFFFFFFF)
+#define COLOR_SWITCH(color) lv_color_hex(color_t[color])
+
+typedef enum {
+    COLOR_RED,
+    COLOR_GREEN,
+    COLOR_BLUE,
+    COLOR_WHITE,
+    COLOR_BLACK,
+    COLOR_MAX
+}color_cnt;
+
+uint32_t color_t[COLOR_MAX] = {
+    [COLOR_RED]     = 0xFFFF0000,
+    [COLOR_GREEN]   = 0xFF008000,
+    [COLOR_BLUE]    = 0xFF0000FF,
+    [COLOR_WHITE]   = 0xFFFFFFFF,
+    [COLOR_BLACK]   = 0x00000000,
+};
+
 typedef enum {
     BLOCK1,
     BLOCK2,
@@ -18,38 +33,36 @@ typedef enum {
 typedef struct my_demo_config_x{
     lv_obj_t* block[BLOCK_MAX];
     lv_obj_t* label[BLOCK_MAX];
+    lv_timer_t* timer1;
 }my_demo_config_t;
-lv_style_t block_style[BLOCK_MAX];
+lv_style_t block_style[BLOCK_MAX];  //生命周期的问题所以不能用局部变量，若要使用局部变量只能使用局部静态变量
 my_demo_config_t my_demo_config;
 
 void setting_bg_color(lv_style_t* block_style, uint8_t cnt)
 {
-    static uint32_t color_hex = 0xFF000000;
-    lv_color_t c;
+    my_demo_config_t* ctx = &my_demo_config;
     uint8_t s_cnt = cnt%4;
     printf("[setting_bg_color] s_cnt %d, cnt %d\n", s_cnt, cnt);
     switch (s_cnt) {
         case 0:
-            lv_style_set_bg_color(block_style, COLOR_RED);
+            lv_style_set_bg_color(block_style, COLOR_SWITCH(COLOR_RED));
             break;
         case 1:
-            lv_style_set_bg_color(block_style, COLOR_GREEN);
+            lv_style_set_bg_color(block_style, COLOR_SWITCH(COLOR_GREEN));
             break;
         case 2:
-            lv_style_set_bg_color(block_style, COLOR_BLUE);
+            lv_style_set_bg_color(block_style, COLOR_SWITCH(COLOR_BLUE));
             break;
         case 3:
-            lv_style_set_bg_color(block_style, COLOR_WHITE);
+            lv_style_set_bg_color(block_style, COLOR_SWITCH(COLOR_WHITE));
             break;
         default:
-            lv_style_set_bg_color(block_style, lv_color_hex(color_hex));
+            lv_style_set_bg_color(block_style, COLOR_SWITCH(COLOR_BLACK));
             break;
     }
-    color_hex += 0xFF;
-    // printf("color_hex 0x%x\n", color_hex);
-    if (color_hex > 0xFFFFFFFF) {
-        color_hex = 0xFF000000;
-    }
+    // if (cnt == 255) {
+    //     lv_timer_pause(ctx->timer1);
+    // }
 }
 
 void my_demo_test_timer(lv_timer_t* timer)
@@ -92,7 +105,7 @@ void lv_my_demo_1()
         setting_bg_color(&block_style[i], i);
         lv_obj_add_style(ctx->block[i], &block_style[i], LV_PART_MAIN);
     }
-    lv_timer_create(my_demo_test_timer, 1000, NULL);
+    ctx->timer1 = lv_timer_create(my_demo_test_timer, 1000, NULL);
 
 }
 #endif
