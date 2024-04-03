@@ -166,6 +166,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="lv_100ask_teach_demos/src/lv_100ask_teach_demos.h" />
+		<Unit filename="lv_100ask_teach_demos/src/lv_my_demo_test/lv_my_demo_test.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lv_100ask_teach_demos/src/lv_my_demo_test/lv_my_demo_test.h" />
 		<Unit filename="lv_100ask_teach_demos_conf.h" />
 		<Unit filename="lv_conf.h" />
 		<Unit filename="lv_demo_conf.h" />
