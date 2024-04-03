@@ -37,7 +37,7 @@ typedef struct my_demo_config_x{
 }my_demo_config_t;
 lv_style_t block_style[BLOCK_MAX];  //生命周期的问题所以不能用局部变量，若要使用局部变量只能使用局部静态变量
 my_demo_config_t my_demo_config;
-
+uint16_t timer_ms;
 void setting_bg_color(lv_style_t* block_style, uint8_t cnt)
 {
     my_demo_config_t* ctx = &my_demo_config;
@@ -61,7 +61,12 @@ void setting_bg_color(lv_style_t* block_style, uint8_t cnt)
             break;
     }
     // if (cnt == 255) {
-    //     lv_timer_pause(ctx->timer1);
+    //     timer_ms = timer_ms/10;
+    //     if (timer_ms) {
+    //         lv_timer_set_period(ctx->timer1, timer_ms);
+    //     } else {
+    //         lv_timer_pause(ctx->timer1);
+    //     }
     // }
 }
 
@@ -105,7 +110,8 @@ void lv_my_demo_1()
         setting_bg_color(&block_style[i], i);
         lv_obj_add_style(ctx->block[i], &block_style[i], LV_PART_MAIN);
     }
-    ctx->timer1 = lv_timer_create(my_demo_test_timer, 1000, NULL);
+    timer_ms = 1000;
+    ctx->timer1 = lv_timer_create(my_demo_test_timer, timer_ms, NULL);
 
 }
 #endif
