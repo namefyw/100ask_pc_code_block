@@ -38,6 +38,7 @@ typedef struct my_demo_config_x{
 lv_style_t block_style[BLOCK_MAX];  //生命周期的问题所以不能用局部变量，若要使用局部变量只能使用局部静态变量
 my_demo_config_t my_demo_config;
 uint16_t timer_ms;
+
 void setting_bg_color(lv_style_t* block_style, uint8_t cnt)
 {
     my_demo_config_t* ctx = &my_demo_config;
@@ -94,7 +95,7 @@ void lv_my_demo_1()
     for (int i = 0; i < BLOCK_MAX; i++) {
         ctx->block[i] = lv_obj_create(lv_scr_act());
         lv_obj_set_size(ctx->block[i], LV_PCT(50), LV_PCT(50));
-        ctx->label[i] = lv_label_create(ctx->block[i]);
+        ctx->label[i] = lv_label_create(lv_scr_act());
         lv_label_set_text_fmt(ctx->label[i], "block%d", i);
 
     }
@@ -105,13 +106,28 @@ void lv_my_demo_1()
     lv_obj_align(ctx->block[BLOCK4], LV_ALIGN_BOTTOM_LEFT, 0, 0);
 
     for (int i = 0; i < BLOCK_MAX; i++) {
-        lv_obj_align(ctx->label[i], LV_ALIGN_CENTER, 0, 0);
+        lv_obj_align_to(ctx->label[i], ctx->block[i], LV_ALIGN_CENTER, 0, 0);
         lv_style_init(&block_style[i]);
         setting_bg_color(&block_style[i], i);
         lv_obj_add_style(ctx->block[i], &block_style[i], LV_PART_MAIN);
     }
     timer_ms = 1000;
-    ctx->timer1 = lv_timer_create(my_demo_test_timer, timer_ms, NULL);
+    // ctx->timer1 = lv_timer_create(my_demo_test_timer, timer_ms, NULL);
+    for (int i = 0; i < BLOCK_MAX; i++) {
+        printf("block[%d]:\r\n", i);
+        printf_obj_data(ctx->block[i]);
+        printf("label[%d]:\r\n", i);
+        printf_obj_data(ctx->label[i]);
+    }
 
+}
+
+/* test function */
+void printf_obj_data(lv_obj_t* obj)
+{
+    printf("x:%d\n", lv_obj_get_x(obj));
+    printf("y:%d\n", lv_obj_get_y(obj));
+    printf("w:%d\n", lv_obj_get_width(obj));
+    printf("h:%d\n", lv_obj_get_height(obj));
 }
 #endif
