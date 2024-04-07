@@ -60,7 +60,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
     /*Run the demo*/
     // lv_100ask_demo_course_2_1_1();      // 基础对象(lv_obj)，"Hello, LVGL!"
 	//lv_100ask_demo_course_2_2_2();    // 基础对象的大小(size)
-	lv_100ask_demo_course_2_2_3();    // 基础对象的位置(position)
+	// lv_100ask_demo_course_2_2_3();    // 基础对象的位置(position)
 	//lv_100ask_demo_course_2_2_4();    // 基础对象的盒子模型(border-box)
 	//lv_100ask_demo_course_2_2_5();    // 基础对象的样式(styles)
 	//lv_100ask_demo_course_2_2_6();    // 基础对象的事件(events)、事件冒泡

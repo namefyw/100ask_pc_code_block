@@ -4,7 +4,7 @@
 #include <time.h>
 #include <stdbool.h>
 
-#define BLOCK_BG_SET    false
+#define BLOCK_BG_SET    true
 
 #define COLOR_SWITCH(color) lv_color_hex(color_t[color])
 #define DEFAULE_COLOR_HEX   0x8B0000
@@ -39,15 +39,15 @@ typedef enum {
 typedef struct my_demo_config_x{
     lv_obj_t* block[BLOCK_MAX];
     lv_obj_t* label[BLOCK_MAX];
+    // lv_obj_t* test_box[BLOCK_MAX];
     lv_timer_t* timer1;
-}my_demo_config_t;
-#if BLOCK_BG_SET
-lv_style_t block_style[BLOCK_MAX];  //生命周期的问题所以不能用局部变量，若要使用局部变量只能使用局部静态变量
-#endif
+    lv_style_t block_style[BLOCK_MAX];  //生命周期的问题所以不能用局部变量，若要使用局部变量只能使用局部静态变量
+} my_demo_config_t;
+
 my_demo_config_t my_demo_config;
 uint16_t timer_ms;
 
-void setting_bg_color(lv_style_t* block_style, uint8_t cnt)
+void setting_bg_color(lv_style_t* block_style, color_cnt cnt)
 {
     my_demo_config_t* ctx = &my_demo_config;
     printf("[%s] cnt %d\n",__FUNCTION__, cnt);
@@ -70,24 +70,26 @@ void setting_bg_color(lv_style_t* block_style, uint8_t cnt)
         default:
             break;
     }
-    // if (cnt == 255) {
-    //     timer_ms = timer_ms/10;
-    //     if (timer_ms) {
-    //         lv_timer_set_period(ctx->timer1, timer_ms);
-    //     } else {
-    //         lv_timer_pause(ctx->timer1);
-    //     }
-    // }
+#if 0
+    if (cnt == 255) {
+        timer_ms = timer_ms/10;
+        if (timer_ms) {
+            lv_timer_set_period(ctx->timer1, timer_ms);
+        } else {
+            lv_timer_pause(ctx->timer1);
+        }
+    }
+#endif
 }
-/* 设置默认背景颜色, 目前会导致style设定的效果失效 */
-void setting_defautl_bg_color(lv_obj_t* obj, uint8_t cnt)
+/* 设置默认背景颜色 */
+void setting_defautl_bg_color(lv_obj_t* obj, color_cnt cnt)
 {
     my_demo_config_t* ctx = &my_demo_config;
     lv_color32_t color;
     printf("[%s] cnt %d\n",__FUNCTION__, cnt);
     switch (cnt) {
         case COLOR_RED:
-            color = COLOR_SWITCH(COLOR_RED);    /* 该函数用于不可变换的UI风格 */
+            color = COLOR_SWITCH(COLOR_RED);
             break;
         case COLOR_GREEN:
             color = COLOR_SWITCH(COLOR_GREEN);
@@ -109,14 +111,16 @@ void setting_defautl_bg_color(lv_obj_t* obj, uint8_t cnt)
             break;
     }
     lv_obj_set_style_bg_color(obj, color, LV_PART_MAIN);
-    // if (cnt == 255) {
-    //     timer_ms = timer_ms/10;
-    //     if (timer_ms) {
-    //         lv_timer_set_period(ctx->timer1, timer_ms);
-    //     } else {
-    //         lv_timer_pause(ctx->timer1);
-    //     }
-    // }
+#if 0
+    if (cnt == 255) {
+        timer_ms = timer_ms/10;
+        if (timer_ms) {
+            lv_timer_set_period(ctx->timer1, timer_ms);
+        } else {
+            lv_timer_pause(ctx->timer1);
+        }
+    }
+#endif
 }
 
 void my_demo_test_timer(lv_timer_t* timer)
@@ -149,7 +153,6 @@ void lv_my_demo_1()
         // ctx->label[i] = lv_label_create(lv_scr_act());
         ctx->label[i] = lv_label_create(ctx->block[i]);
         lv_label_set_text_fmt(ctx->label[i], "block%d", i);
-
     }
 
     lv_obj_align(ctx->block[BLOCK1], LV_ALIGN_TOP_LEFT, 0, 0);
@@ -159,16 +162,11 @@ void lv_my_demo_1()
     for (int i = 0; i < BLOCK_MAX; i++) {
         lv_obj_align_to(ctx->label[i], ctx->block[i], LV_ALIGN_CENTER, 0, 0);    /* 该方式可以打印出坐标, 但是打印出来的坐标是相对坐标 */
         // lv_obj_align(ctx->label[i], LV_ALIGN_CENTER, 0, 0); /* 该方式打印不出来坐标 */
-#if BLOCK_BG_SET
-        lv_style_init(&block_style[i]);
-        setting_bg_color(&block_style[i], i);
-        lv_style_set_border_color(&block_style[i], COLOR_SWITCH(COLOR_BLACK));
-        lv_obj_add_style(ctx->block[i], &block_style[i], LV_PART_MAIN);
-#else
-        setting_defautl_bg_color(ctx->block[i], i);
-#endif
-        // lv_obj_set_style_text_color(ctx->label[i], COLOR_SWITCH(COLOR_PINK), LV_PART_MAIN);
-        test = lv_obj_get_parent(ctx->label[i]);
+        lv_style_init(&ctx->block_style[i]);
+        setting_bg_color(&ctx->block_style[i], i);
+        lv_style_set_border_color(&ctx->block_style[i], COLOR_SWITCH(COLOR_BLACK));
+        lv_obj_add_style(ctx->block[i], &ctx->block_style[i], LV_STATE_PRESSED);
+        setting_defautl_bg_color(ctx->block[i], COLOR_PINK);
     }
 
     timer_ms = 1000;
