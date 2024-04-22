@@ -66,6 +66,7 @@ extern "C" {
 
 
 #include "src/lv_my_demo_test/lv_my_demo_test.h"
+#include "src/lv_avi_play_demo/lv_avi_play_demo.h"
 
 /*********************
  *      DEFINES

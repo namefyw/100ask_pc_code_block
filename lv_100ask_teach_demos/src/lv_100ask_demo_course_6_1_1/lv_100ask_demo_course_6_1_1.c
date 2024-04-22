@@ -64,12 +64,12 @@ static void lv_fs_read_file(char * path);
 void lv_100ask_demo_course_6_1_1(void)
 {
 #if 1
-	// 读取文件	
+	// 读取文件
 	lv_fs_read_file(FILE_NAME);
 #else
 	// 读取目录内容
 	lv_fs_read_dir(DIR_PATH);
-#endif	
+#endif
 
 }
 
