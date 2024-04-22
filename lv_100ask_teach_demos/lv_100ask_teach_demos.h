@@ -31,6 +31,9 @@ extern "C" {
 #include "../lv_100ask_teach_demos_conf.h"
 #endif
 
+
+#define LV_LOG printf("[%s] [D] - %d ", __FUNCTION__, __LINE__);printf
+
 #include "src/lv_100ask_demo_course_2_1_1/lv_100ask_demo_course_2_1_1.h"    // 基础对象(lv_obj)，"Hello, LVGL!"
 #include "src/lv_100ask_demo_course_2_2_2/lv_100ask_demo_course_2_2_2.h"    // 基础对象的大小(size)
 #include "src/lv_100ask_demo_course_2_2_3/lv_100ask_demo_course_2_2_3.h"    // 基础对象的位置(position)

@@ -9,6 +9,11 @@
 #define COLOR_SWITCH(color) lv_color_hex(color_t[color])
 #define DEFAULE_COLOR_HEX   0x8B0000
 
+/* 打印控制 */
+#ifndef LV_LOG
+#define LV_LOG(...)
+#endif
+
 typedef enum {
     COLOR_RED,
     COLOR_GREEN,
@@ -50,7 +55,7 @@ uint16_t timer_ms;
 void setting_bg_color(lv_style_t* block_style, color_cnt cnt)
 {
     my_demo_config_t* ctx = &my_demo_config;
-    printf("[%s] cnt %d\n",__FUNCTION__, cnt);
+    LV_LOG("cnt %d\n", cnt);
     switch (cnt) {
         case COLOR_RED:
             lv_style_set_bg_color(block_style, COLOR_SWITCH(COLOR_RED));    /* 该函数用于可以变换的UI风格 */
@@ -86,7 +91,7 @@ void setting_defautl_bg_color(lv_obj_t* obj, color_cnt cnt)
 {
     my_demo_config_t* ctx = &my_demo_config;
     lv_color32_t color;
-    printf("[%s] cnt %d\n",__FUNCTION__, cnt);
+    LV_LOG("cnt %d\n", cnt);
     switch (cnt) {
         case COLOR_RED:
             color = COLOR_SWITCH(COLOR_RED);
@@ -129,7 +134,7 @@ void my_demo_test_timer(lv_timer_t* timer)
     static uint8_t cnt = 0;
     time_t now = time(NULL);
     struct tm *local_time = localtime(&now);
-    printf("switch bg_color, now: %04d-%02d-%02d %02d:%02d:%02d\n",\
+    LV_LOG("switch bg_color, now: %04d-%02d-%02d %02d:%02d:%02d\n",\
              local_time->tm_year+1900, local_time->tm_mon+1, local_time->tm_mday,\
              local_time->tm_hour, local_time->tm_min, local_time->tm_sec);
     for (int i = 0; i < BLOCK_MAX; i++) {
@@ -139,6 +144,31 @@ void my_demo_test_timer(lv_timer_t* timer)
     cnt++;
     }
     cnt++;
+}
+
+void lv_event_test_cb(lv_event_t * e)
+{
+    lv_obj_t* label = lv_event_get_user_data(e);
+    lv_event_code_t event = lv_event_get_code(e);
+    static lv_event_code_t save_last = 0;
+
+    switch (event) {
+        case LV_EVENT_PRESSED:
+            LV_LOG("event %02x\n", event);
+            lv_label_set_text_fmt(label, "event %02x", event);
+        break;
+        case LV_EVENT_SHORT_CLICKED:
+            LV_LOG("event %02x\n", event);
+            lv_label_set_text_fmt(label, "event %02x", event);
+        break;
+        default:
+            if (save_last == event) {
+                LV_LOG("default event %02x\n", event);
+                save_last = event;
+            }
+        break;
+    }
+
 }
 
 void lv_my_demo_1()
@@ -169,23 +199,28 @@ void lv_my_demo_1()
         setting_defautl_bg_color(ctx->block[i], COLOR_PINK);
     }
 
-    timer_ms = 1000;
-    // ctx->timer1 = lv_timer_create(my_demo_test_timer, timer_ms, NULL);
-    for (int i = 0; i < BLOCK_MAX; i++) {
-        printf("block[%d]:\r\n", i);
-        printf_obj_data(ctx->block[i]);
-        printf("label[%d]:\r\n", i);
-        printf_obj_data(ctx->label[i]);
+    for (int i = 0; i < BLOCK_MAX; i++){
+        lv_obj_add_event_cb(ctx->block[i], lv_event_test_cb, LV_EVENT_ALL, ctx->label[i]);
     }
+    timer_ms = 1000;
+    /* rgb功能 */
+    ctx->timer1 = lv_timer_create(my_demo_test_timer, timer_ms, NULL);
+
+    // for (int i = 0; i < BLOCK_MAX; i++) {
+    //     LV_LOG("block[%d]:\r\n", i);
+    //     LV_LOG_obj_data(ctx->block[i]);
+    //     LV_LOG("label[%d]:\r\n", i);
+    //     LV_LOG_obj_data(ctx->label[i]);
+    // }
 
 }
 
 /* test function */
 void printf_obj_data(lv_obj_t* obj)
 {
-    printf("x:%d\n", lv_obj_get_x(obj));
-    printf("y:%d\n", lv_obj_get_y(obj));
-    printf("w:%d\n", lv_obj_get_width(obj));
-    printf("h:%d\n", lv_obj_get_height(obj));
+    LV_LOG("x:%d\n", lv_obj_get_x(obj));
+    LV_LOG("y:%d\n", lv_obj_get_y(obj));
+    LV_LOG("w:%d\n", lv_obj_get_width(obj));
+    LV_LOG("h:%d\n", lv_obj_get_height(obj));
 }
 #endif

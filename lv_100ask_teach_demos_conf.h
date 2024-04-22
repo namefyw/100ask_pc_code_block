@@ -60,8 +60,8 @@
 #define LV_USE_100ASK_DEMO_COURSE_X_1_1      0
 #endif
 
-#define LV_MY_DEMO_1                         0
-#define LV_AVI_PLAY_DEMO                     1
+#define LV_MY_DEMO_1                         1
+#define LV_AVI_PLAY_DEMO                     0
 
 #endif /*LV_100ASK_TEACH_DEMOS_CONF_H*/
 
