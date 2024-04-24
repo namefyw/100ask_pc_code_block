@@ -43,6 +43,9 @@ typedef enum {
 
 typedef struct my_demo_config_x{
     lv_obj_t* block[BLOCK_MAX];
+    lv_obj_t* block1[BLOCK_MAX];
+    lv_obj_t* block2[BLOCK_MAX];
+    lv_obj_t* block3[BLOCK_MAX];
     lv_obj_t* label[BLOCK_MAX];
     // lv_obj_t* test_box[BLOCK_MAX];
     lv_timer_t* timer1;
@@ -148,6 +151,8 @@ void my_demo_test_timer(lv_timer_t* timer)
 
 void lv_event_test_cb(lv_event_t * e)
 {
+    lv_obj_t* block = lv_event_get_target(e);
+    lv_obj_t* parent = lv_event_get_current_target(e); /* 仅在开启冒泡事件的时候才能使用 */
     lv_obj_t* label = lv_event_get_user_data(e);
     lv_event_code_t event = lv_event_get_code(e);
     static lv_event_code_t save_last = 0;
@@ -156,10 +161,14 @@ void lv_event_test_cb(lv_event_t * e)
         case LV_EVENT_PRESSED:
             LV_LOG("event %02x\n", event);
             lv_label_set_text_fmt(label, "event %02x", event);
+            setting_defautl_bg_color(block, COLOR_RED);
+            setting_defautl_bg_color(parent, COLOR_RED);
         break;
         case LV_EVENT_SHORT_CLICKED:
             LV_LOG("event %02x\n", event);
             lv_label_set_text_fmt(label, "event %02x", event);
+            setting_defautl_bg_color(block, COLOR_PINK);
+            setting_defautl_bg_color(parent, COLOR_PINK);
         break;
         default:
             if (save_last == event) {
@@ -181,22 +190,42 @@ void lv_my_demo_1()
         ctx->block[i] = lv_obj_create(lv_scr_act());
         lv_obj_set_size(ctx->block[i], LV_PCT(50), LV_PCT(50));
         // ctx->label[i] = lv_label_create(lv_scr_act());
-        ctx->label[i] = lv_label_create(ctx->block[i]);
-        lv_label_set_text_fmt(ctx->label[i], "block%d", i);
     }
 
     lv_obj_align(ctx->block[BLOCK1], LV_ALIGN_TOP_LEFT, 0, 0);
     lv_obj_align(ctx->block[BLOCK2], LV_ALIGN_TOP_RIGHT, 0, 0);
     lv_obj_align(ctx->block[BLOCK3], LV_ALIGN_BOTTOM_RIGHT, 0, 0);
     lv_obj_align(ctx->block[BLOCK4], LV_ALIGN_BOTTOM_LEFT, 0, 0);
+
     for (int i = 0; i < BLOCK_MAX; i++) {
-        lv_obj_align_to(ctx->label[i], ctx->block[i], LV_ALIGN_CENTER, 0, 0);    /* 该方式可以打印出坐标, 但是打印出来的坐标是相对坐标 */
-        // lv_obj_align(ctx->label[i], LV_ALIGN_CENTER, 0, 0); /* 该方式打印不出来坐标 */
-        lv_style_init(&ctx->block_style[i]);
-        setting_bg_color(&ctx->block_style[i], i);
-        lv_style_set_border_color(&ctx->block_style[i], COLOR_SWITCH(COLOR_BLACK));
-        lv_obj_add_style(ctx->block[i], &ctx->block_style[i], LV_STATE_PRESSED);
-        setting_defautl_bg_color(ctx->block[i], COLOR_PINK);
+        ctx->block1[i] = lv_obj_create(ctx->block[i]);
+        lv_obj_align(ctx->block1[i], LV_ALIGN_CENTER, 0, 0);
+        lv_obj_set_size(ctx->block1[i], LV_PCT(80), LV_PCT(80));
+        lv_obj_add_flag(ctx->block1[i], LV_OBJ_FLAG_EVENT_BUBBLE);
+    }
+    for (int i = 0; i < BLOCK_MAX; i++) {
+        ctx->block2[i] = lv_obj_create(ctx->block1[i]);
+        lv_obj_align(ctx->block2[i], LV_ALIGN_CENTER, 0, 0);
+        lv_obj_set_size(ctx->block2[i], LV_PCT(80), LV_PCT(80));
+        lv_obj_add_flag(ctx->block2[i], LV_OBJ_FLAG_EVENT_BUBBLE);
+    }
+    for (int i = 0; i < BLOCK_MAX; i++) {
+        ctx->block3[i] = lv_obj_create(ctx->block2[i]);
+        lv_obj_align(ctx->block3[i], LV_ALIGN_CENTER, 0, 0);
+        lv_obj_set_size(ctx->block3[i], LV_PCT(80), LV_PCT(80));
+        lv_obj_add_flag(ctx->block3[i], LV_OBJ_FLAG_EVENT_BUBBLE);
+    }
+    for (int i = 0; i < BLOCK_MAX; i++) {
+        ctx->label[i] = lv_label_create(ctx->block3[i]);
+        lv_label_set_text_fmt(ctx->label[i], "block%d", i);
+        lv_obj_add_flag(ctx->label[i], LV_OBJ_FLAG_EVENT_BUBBLE);
+        // lv_obj_align_to(ctx->label[i], ctx->block[i], LV_ALIGN_CENTER, 0, 0);    /* 该方式可以打印出坐标, 但是打印出来的坐标是相对坐标 */
+        lv_obj_align(ctx->label[i], LV_ALIGN_CENTER, 0, 0); /* 该方式打印不出来坐标 */
+        // lv_style_init(&ctx->block_style[i]);
+        // setting_bg_color(&ctx->block_style[i], i);
+        // lv_style_set_border_color(&ctx->block_style[i], COLOR_SWITCH(COLOR_BLACK));
+        // lv_obj_add_style(ctx->block[i], &ctx->block_style[i], LV_STATE_PRESSED);
+        // setting_defautl_bg_color(ctx->block[i], COLOR_PINK);
     }
 
     for (int i = 0; i < BLOCK_MAX; i++){
@@ -204,7 +233,7 @@ void lv_my_demo_1()
     }
     timer_ms = 1000;
     /* rgb功能 */
-    ctx->timer1 = lv_timer_create(my_demo_test_timer, timer_ms, NULL);
+    // ctx->timer1 = lv_timer_create(my_demo_test_timer, timer_ms, NULL);
 
     // for (int i = 0; i < BLOCK_MAX; i++) {
     //     LV_LOG("block[%d]:\r\n", i);

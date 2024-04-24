@@ -63,7 +63,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
 	// lv_100ask_demo_course_2_2_3();    // 基础对象的位置(position)
 	//lv_100ask_demo_course_2_2_4();    // 基础对象的盒子模型(border-box)
 	//lv_100ask_demo_course_2_2_5();    // 基础对象的样式(styles)
-	//lv_100ask_demo_course_2_2_6();    // 基础对象的事件(events)、事件冒泡
+	// lv_100ask_demo_course_2_2_6();    // 基础对象的事件(events)、事件冒泡
 
 	//lv_100ask_demo_course_3_1_1();    // 组件(widgets)： 标签(label)的用法
 	//lv_100ask_demo_course_3_1_2();    // 组件(widgets)： 标签(label)，显示中文

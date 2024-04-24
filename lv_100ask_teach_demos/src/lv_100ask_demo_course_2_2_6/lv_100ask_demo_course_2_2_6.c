@@ -38,7 +38,7 @@
  *  STATIC VARIABLES
  **********************/
 
-#if 1
+#if 0
 static void my_event_cb(lv_event_t * e)
 {
     lv_obj_t * obj = lv_event_get_target(e);        // 获取触发事件的部件(对象)
@@ -80,7 +80,7 @@ void lv_100ask_demo_course_2_2_6(void)
 
 
 /* 事件冒泡 */
-#if 0
+#if 1
 static void my_event_cb(lv_event_t * e)
 {
     lv_obj_t * obj = lv_event_get_target(e);            // 获取触发事件的对象
