@@ -18,7 +18,7 @@ typedef struct lv_my_demo_game_2048_t
     uint32_t score;
     uint32_t max_score;
     lv_point_t point;
-    uint32_t num_s[NUM_SIZE];
+    uint32_t num_data[NUM_SIZE];
     uint8_t num_size;
 } lv_my_demo_game_2048_t;
 lv_my_demo_game_2048_t lv_my_demo_game_2048_x;
@@ -50,7 +50,7 @@ static void view_obj_init(lv_obj_t* view)
             lv_obj_align_to(obj, lv_obj_get_child(view, num - 4), LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
         }
 
-        lv_label_set_text_fmt(label, "%d", ctx->num_s[num]);
+        lv_label_set_text_fmt(label, "%d", ctx->num_data[num]);
         lv_obj_align(label, LV_ALIGN_TOP_LEFT, 0, 0);
     }
 }
@@ -64,7 +64,7 @@ void refresh_screen_view()
         lv_obj_t* obj = lv_obj_get_child(ctx->view, i);
         lv_label_t* label = lv_obj_get_child(obj, 0);
         // LV_LOG("obj %p, label %p\n", obj, label);
-        lv_label_set_text_fmt(label, "%d", ctx->num_s[i]);
+        lv_label_set_text_fmt(label, "%d", ctx->num_data[i]);
         lv_obj_invalidate(label);
     }
 }
@@ -76,24 +76,20 @@ void printf_num_s()
         if (i > 0 && (i % 4) == 0) {
             LV_LOG_W("\n");
         }
-        LV_LOG_W("%d ", ctx->num_s[i]);
+        LV_LOG_W("%d ", ctx->num_data[i]);
     }
     LV_LOG_W("\n");
     LV_LOG_W("_____________________\n");
 
 }
 
-bool right_move_view(uint32_t array) {
-    uint8_t cnt;
+bool right_move_view(uint32_t* array)
+{
     bool ret = false;
-    for (int i = 0; i < VIEW_SIZE; i++) {
-        cnt = VIEW_SIZE - 1;
-        for (int j = VIEW_SIZE - 1; j >= 0; j--) {
-            ret = true;
-        }
-    }
+
     return ret;
 }
+
 
 move_confg_t move_direction_select(const lv_coord_t x, const lv_coord_t y)
 {
@@ -129,7 +125,7 @@ void select_move_direction(const lv_point_t* point)
     case RIGHT_MOVE:
         LV_LOG("RIGHT_MOVE\n");
         printf_num_s();
-        flag = right_move_view(ctx->num_s);
+        flag = right_move_view(ctx->num_data);
         printf_num_s();
         break;
     case UP_MOVE:
@@ -142,8 +138,7 @@ void select_move_direction(const lv_point_t* point)
         break;
     }
     if (flag) {
-        LV_LOG("FLAG ------------------\n");
-        update_rand_num(ctx->num_s, ctx->num_size, 1);
+        update_rand_num(ctx->num_data, ctx->num_size, 1);
         refresh_screen_view();
     }
 }
@@ -210,9 +205,9 @@ void lv_my_demo_game(void)
     lv_obj_t* obj = lv_obj_create(lv_scr_act());
     srand(time(NULL));
     lv_obj_set_size(obj, LV_PCT(100), LV_PCT(100));
-    ctx->num_size = sizeof(ctx->num_s)/sizeof(ctx->num_s[0]);
-    memset(ctx->num_s, 0, ctx->num_size);
-    update_rand_num(ctx->num_s, ctx->num_size, 2);
+    ctx->num_size = sizeof(ctx->num_data)/sizeof(ctx->num_data[0]);
+    memset(ctx->num_data, 0, ctx->num_size);
+    update_rand_num(ctx->num_data, ctx->num_size, 2);
     ctx->view = lv_obj_create(obj);
     lv_obj_set_size(ctx->view, LV_PCT(70), LV_PCT(70));
     lv_obj_align(ctx->view, LV_ALIGN_CENTER, 0, 0);
