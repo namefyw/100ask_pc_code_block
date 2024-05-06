@@ -38,6 +38,7 @@ extern "C" {
 
 
 #define LV_LOG printf("[%s] [D] - %d ", __FUNCTION__, __LINE__);printf
+#define LV_LOG_W printf
 
 #include "src/lv_100ask_demo_course_2_1_1/lv_100ask_demo_course_2_1_1.h"    // 基础对象(lv_obj)，"Hello, LVGL!"
 #include "src/lv_100ask_demo_course_2_2_2/lv_100ask_demo_course_2_2_2.h"    // 基础对象的大小(size)
@@ -76,6 +77,7 @@ extern "C" {
 #include "src/lv_my_demo_test/lv_my_demo_test.h"
 #include "src/lv_my_demo_test/lv_my_demo_list.h"
 #include "src/lv_avi_play_demo/lv_avi_play_demo.h"
+#include "src/lv_my_demo_test/lv_my_demo_game_2048.h"
 
 /*********************
  *      DEFINES

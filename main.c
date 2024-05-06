@@ -91,8 +91,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
 
     //lv_100ask_demo_course_x_1_1();    // 拓展高级学习：基于FontAwesome 添加新图标SYMBOLS，进入函数查看详细说明 (需要先在 lv_conf.h 中打开  LV_USE_FREETYPE)
     // lv_my_demo_1();
-    lv_my_demo_list();
+    // lv_my_demo_list();
     // lv_avi_play_demo();
+    lv_my_demo_game();
+    // lv_demo_keypad_encoder();
 
     while(!lv_win32_quit_signal) {
         /* Periodically call the lv_task handler.
