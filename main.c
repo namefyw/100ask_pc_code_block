@@ -50,7 +50,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
     lv_init();
 
     /*Initialize the HAL for LittlevGL*/
-    lv_win32_init(hInstance, SW_SHOWNORMAL, 1024, 600, NULL);
+    lv_win32_init(hInstance, SW_SHOWNORMAL, 1024, 800, NULL);
 
     /*Output prompt information to the console, you can also use printf() to print directly*/
     LV_LOG_USER("LVGL initialization completed!");
@@ -90,7 +90,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
     //lv_100ask_demo_course_6_4_1();    // 第三方库(freeType)：通过freeType显示字体 (需要先在 lv_conf.h 中打开  LV_USE_FREETYPE)
 
     //lv_100ask_demo_course_x_1_1();    // 拓展高级学习：基于FontAwesome 添加新图标SYMBOLS，进入函数查看详细说明 (需要先在 lv_conf.h 中打开  LV_USE_FREETYPE)
-    lv_my_demo_1();
+    // lv_my_demo_1();
+    lv_my_demo_list();
     // lv_avi_play_demo();
 
     while(!lv_win32_quit_signal) {

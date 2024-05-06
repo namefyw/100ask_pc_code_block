@@ -31,6 +31,11 @@ extern "C" {
 #include "../lv_100ask_teach_demos_conf.h"
 #endif
 
+#if 1 /* My need base header file */
+#include "stdint.h"
+#include <stdbool.h>
+#endif
+
 
 #define LV_LOG printf("[%s] [D] - %d ", __FUNCTION__, __LINE__);printf
 
@@ -69,6 +74,7 @@ extern "C" {
 
 
 #include "src/lv_my_demo_test/lv_my_demo_test.h"
+#include "src/lv_my_demo_test/lv_my_demo_list.h"
 #include "src/lv_avi_play_demo/lv_avi_play_demo.h"
 
 /*********************
