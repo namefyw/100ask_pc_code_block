@@ -1,7 +1,7 @@
 #include "../../lv_100ask_teach_demos.h"
 
 #if LV_MY_DEMO_GAME == 2048
-#include "lv_my_demo_game_2048.h"
+#include "lv_my_demo_game.h"
 #include "lv_drivers/win32drv/win32drv.h" /* 使用键盘就必须要包含该头文件 */
 
 #include <stdio.h>

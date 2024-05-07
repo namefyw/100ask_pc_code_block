@@ -77,7 +77,7 @@ extern "C" {
 #include "src/lv_my_demo_test/lv_my_demo_test.h"
 #include "src/lv_my_demo_test/lv_my_demo_list.h"
 #include "src/lv_avi_play_demo/lv_avi_play_demo.h"
-#include "src/lv_my_demo_test/lv_my_demo_game_2048.h"
+#include "src/lv_my_demo_test/lv_my_demo_game.h"
 
 /*********************
  *      DEFINES

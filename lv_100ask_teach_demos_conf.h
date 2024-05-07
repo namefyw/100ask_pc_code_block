@@ -63,7 +63,7 @@
 #define LV_MY_DEMO_1                         0
 #define LV_MY_DEMO_LIST                      0
 #define LV_AVI_PLAY_DEMO                     0
-#define LV_MY_DEMO_GAME                      2048
+#define LV_MY_DEMO_GAME                      1
 
 #endif /*LV_100ASK_TEACH_DEMOS_CONF_H*/
 
