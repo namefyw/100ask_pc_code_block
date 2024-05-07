@@ -10,6 +10,10 @@
 #define NUM_SIZE VIEW_SIZE*VIEW_SIZE
 #define BLOCK_SIZE LV_PCT(100/VIEW_SIZE)
 #define RANGE_JUDGMENT 80
+
+#ifndef LV_LOG
+#define LV_LOG(...)
+#endif
 typedef struct lv_my_demo_game_2048_t
 {
     lv_obj_t* score_obj;
