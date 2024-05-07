@@ -64,32 +64,222 @@ void refresh_screen_view()
         lv_obj_t* obj = lv_obj_get_child(ctx->view, i);
         lv_label_t* label = lv_obj_get_child(obj, 0);
         // LV_LOG("obj %p, label %p\n", obj, label);
+        lv_obj_set_style_bg_color(obj, lv_color_hex(~ctx->num_data[i]), 0);
         lv_label_set_text_fmt(label, "%d", ctx->num_data[i]);
+
         lv_obj_invalidate(label);
     }
 }
 
-void printf_num_s()
+void printf_num_s(uint32_t* array)
 {
+    uint32_t* ary = NULL;
     lv_my_demo_game_2048_t* ctx = &lv_my_demo_game_2048_x;
+    if (array == NULL) {
+        ary = ctx->num_data;
+    } else {
+        ary = array;
+    }
     for (uint8_t i = 0; i < 16; i++) {
         if (i > 0 && (i % 4) == 0) {
             LV_LOG_W("\n");
         }
-        LV_LOG_W("%d ", ctx->num_data[i]);
+        // LV_LOG_W("[%d]%d %p", i, ary[i], &ary[i]);
+        LV_LOG_W("[%d]", ary[i]);
     }
     LV_LOG_W("\n");
     LV_LOG_W("_____________________\n");
-
 }
 
-bool right_move_view(uint32_t* array)
+bool right_move_view(uint32_t* array, uint8_t size, uint8_t index)
 {
     bool ret = false;
+    uint32_t* flag = NULL;
+
+    // 向右合并相同的数字
+    for (int8_t i = size - 1; i >= 0; i--) {
+        if (flag) {
+            if (*flag == array[i]) {
+                *flag += array[i];
+                array[i] = 0;
+                flag = NULL;
+                ret = true;
+            } else if (array[i] > 0){
+                flag = &array[i];
+            }
+        } else if(array[i] > 0) {
+            flag = &array[i];
+        }
+        if ((i % 4) == 0) {
+            flag = NULL;
+        }
+    }
+
+    // 向右移动非零的数字
+    flag = NULL;
+    for (int8_t i = size - 1; i >= 0; i--) {
+        if (flag) {
+            if (array[i] > 0) {
+                *flag = array[i];
+                array[i] = 0;
+                if ((i + 1) % 4 != 0) {
+                    flag = &array[i+1];
+                }
+                ret = true;
+            }
+        } else if(array[i] == 0) {
+            flag = &array[i];
+        }
+        if ((i % 4) == 0) {
+            flag = NULL;
+        }
+    }
 
     return ret;
 }
 
+bool left_move_view(uint32_t* array, uint8_t size, uint8_t index)
+{
+    bool ret = false;
+    uint32_t* flag = NULL;
+
+    for (uint8_t row = 0; row < 4; row++) {
+        flag = NULL;
+        for (uint8_t col = 0; col < 4; col++) {
+            uint8_t i = row * 4 + col;
+            if (flag) {
+                if (*flag == array[i] && array[i] != 0) {
+                    *flag += array[i];
+                    array[i] = 0;
+                    flag = NULL;
+                    ret = true;
+                } else if (array[i] > 0) {
+                    flag = &array[i];
+                }
+            } else if (array[i] > 0) {
+                flag = &array[i];
+            }
+        }
+    }
+
+    // 向左移动非零的数字
+    for (uint8_t row = 0; row < 4; row++) {
+        flag = NULL;
+        for (uint8_t col = 0; col < 4; col++) {
+            uint8_t i = row * 4 + col;
+            if (flag) {
+                if (array[i] > 0) {
+                    *flag = array[i];
+                    array[i] = 0;
+                    if (col > 0) {
+                        flag = &array[row * 4 + col - 1];
+                    }
+                    ret = true;
+                }
+            } else if (array[i] == 0) {
+                flag = &array[i];
+            }
+        }
+    }
+
+    return ret;
+}
+
+bool up_move_view(uint32_t* array, uint8_t size, uint8_t index)
+{
+    bool ret = false;
+    uint32_t* flag = NULL;
+
+    // 向上合并相同的数字
+    for (uint8_t col = 0; col < 4; col++) {
+        flag = NULL;
+        for (int8_t row = 0; row < 4; row++) {
+            uint8_t i = row * 4 + col;
+            if (flag) {
+                if (*flag == array[i] && array[i] != 0) {
+                    *flag += array[i];
+                    array[i] = 0;
+                    flag = NULL;
+                    ret = true;
+                } else if (array[i] > 0) {
+                    flag = &array[i];
+                }
+            } else if (array[i] > 0) {
+                flag = &array[i];
+            }
+        }
+    }
+
+    // 向上移动非零的数字
+    for (uint8_t col = 0; col < 4; col++) {
+        flag = NULL;
+        for (int8_t row = 0; row < 4; row++) {
+            uint8_t i = row * 4 + col;
+            if (flag) {
+                if (array[i] > 0) {
+                    *flag = array[i];
+                    array[i] = 0;
+                    if (row > 0) {
+                        flag = &array[(row - 1) * 4 + col];
+                    }
+                    ret = true;
+                }
+            } else if (array[i] == 0) {
+                flag = &array[i];
+            }
+        }
+    }
+
+    return ret;
+}
+
+bool down_move_view(uint32_t* array, uint8_t size, uint8_t index)
+{
+    bool ret = false;
+    uint32_t* flag = NULL;
+
+    // 向下合并相同的数字
+    for (int8_t col = 0; col < 4; col++) {
+        flag = NULL;
+        for (int8_t row = 3; row >= 0; row--) {
+            uint8_t i = row * 4 + col;
+            if (flag) {
+                if (*flag == array[i] && array[i] != 0) {
+                    *flag += array[i];
+                    array[i] = 0;
+                    flag = NULL;
+                    ret = true;
+                } else if (array[i] > 0) {
+                    flag = &array[i];
+                }
+            } else if (array[i] > 0) {
+                flag = &array[i];
+            }
+        }
+    }
+
+    // 向下移动非零的数字
+    for (int8_t col = 0; col < 4; col++) {
+        flag = NULL;
+        for (int8_t row = 3; row >= 0; row--) {
+            uint8_t i = row * 4 + col;
+            if (flag) {
+                if (array[i] > 0) {
+                    *flag = array[i];
+                    array[i] = 0;
+                    if (row < 3) {
+                        flag = &array[(row + 1) * 4 + col];
+                    }
+                    ret = true;
+                }
+            } else if (array[i] == 0) {
+                flag = &array[i];
+            }
+        }
+    }
+
+    return ret;
+}
 
 move_confg_t move_direction_select(const lv_coord_t x, const lv_coord_t y)
 {
@@ -117,26 +307,29 @@ void select_move_direction(const lv_point_t* point)
     lv_coord_t diff_x = point->x - ctx->point.x;
     lv_coord_t diff_y = point->y - ctx->point.y;
     bool flag = false;
+    printf_num_s(ctx->num_data);
     switch (move_direction_select(diff_x, diff_y))
     {
     case LEFT_MOVE:
         LV_LOG("LEFT_MOVE\n");
+        flag = left_move_view(ctx->num_data, ctx->num_size, 0);
         break;
     case RIGHT_MOVE:
         LV_LOG("RIGHT_MOVE\n");
-        printf_num_s();
-        flag = right_move_view(ctx->num_data);
-        printf_num_s();
+        flag = right_move_view(ctx->num_data, ctx->num_size, 0);
         break;
     case UP_MOVE:
         LV_LOG("UP_MOVE\n");
+        flag = up_move_view(ctx->num_data, ctx->num_size, 0);
         break;
     case DOWN_MOVE:
         LV_LOG("DOWN_MOVE\n");
+        flag = down_move_view(ctx->num_data, ctx->num_size, 0);
         break;
     default:
         break;
     }
+    printf_num_s(ctx->num_data);
     if (flag) {
         update_rand_num(ctx->num_data, ctx->num_size, 1);
         refresh_screen_view();
@@ -180,12 +373,10 @@ void update_rand_num(uint32_t* array, uint8_t size, uint8_t cnt)
     }
     if (flag > 0){
         uint8_t num = rand() % flag;
-        LV_LOG("[B] NUM %d\n", num);
         for (uint8_t i = 0; i < size; i++) {
             if ((num > 0) && (array[i] == 0)) {
                 num--;
             } else if (array[i] == 0){
-                LV_LOG("NUM %d\n", num);
                 uint32_t val = (rand() % 10 == 1) ? 4 : 2;
                 array[i] = val;
                 cnt--;
@@ -206,6 +397,7 @@ void lv_my_demo_game(void)
     srand(time(NULL));
     lv_obj_set_size(obj, LV_PCT(100), LV_PCT(100));
     ctx->num_size = sizeof(ctx->num_data)/sizeof(ctx->num_data[0]);
+    LV_LOG("num_size %d\n", ctx->num_size);
     memset(ctx->num_data, 0, ctx->num_size);
     update_rand_num(ctx->num_data, ctx->num_size, 2);
     ctx->view = lv_obj_create(obj);
