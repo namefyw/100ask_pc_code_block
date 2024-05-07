@@ -2,6 +2,8 @@
 
 #if LV_MY_DEMO_GAME == 2048
 #include "lv_my_demo_game_2048.h"
+#include "lv_drivers/win32drv/win32drv.h" /* 使用键盘就必须要包含该头文件 */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -24,16 +26,28 @@ typedef struct lv_my_demo_game_2048_t
     lv_point_t point;
     uint32_t num_data[NUM_SIZE];
     uint8_t num_size;
+    // lv_indev_t* keypad;
+    // lv_indev_t* touch;
+    lv_group_t*  g;
 } lv_my_demo_game_2048_t;
-lv_my_demo_game_2048_t lv_my_demo_game_2048_x;
 
 typedef enum {
     NONE_MOVE,
-    LEFT_MOVE = 1 << 0,
-    RIGHT_MOVE = 1 << 1,
-    UP_MOVE = 1 << 2,
-    DOWN_MOVE = 1 << 3,
+    LEFT_MOVE,
+    RIGHT_MOVE,
+    UP_MOVE,
+    DOWN_MOVE,
+
+/* 键盘控制的标志 */
+    UP_KEY = 17,
+    DOWN_KEY,
+    RIGHT_KEY,
+    LEFT_KEY,
 } move_confg_t;
+
+
+lv_my_demo_game_2048_t lv_my_demo_game_2048_x;
+
 
 void update_rand_num(uint32_t* array, uint8_t size, uint8_t cnt);
 
@@ -46,7 +60,6 @@ static void view_obj_init(lv_obj_t* view)
         lv_obj_t* obj = lv_obj_create(view);
         lv_label_t* label = lv_label_create(obj);
         lv_obj_add_flag(obj, LV_OBJ_FLAG_EVENT_BUBBLE);
-        lv_obj_set_size(label, LV_PCT(50), LV_PCT(50));
         lv_obj_set_size(obj, LV_PCT(100/VIEW_SIZE), LV_PCT(100/VIEW_SIZE));
         if (num % 4) {
             lv_obj_align_to(obj, lv_obj_get_child(view, num-1), LV_ALIGN_OUT_RIGHT_MID, 0, 0);
@@ -55,7 +68,8 @@ static void view_obj_init(lv_obj_t* view)
         }
 
         lv_label_set_text_fmt(label, "%d", ctx->num_data[num]);
-        lv_obj_align(label, LV_ALIGN_TOP_LEFT, 0, 0);
+        lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
+        lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
     }
 }
 
@@ -70,8 +84,6 @@ void refresh_screen_view()
         // LV_LOG("obj %p, label %p\n", obj, label);
         lv_obj_set_style_bg_color(obj, lv_color_hex(~ctx->num_data[i]), 0);
         lv_label_set_text_fmt(label, "%d", ctx->num_data[i]);
-
-        lv_obj_invalidate(label);
     }
 }
 
@@ -305,28 +317,30 @@ move_confg_t move_direction_select(const lv_coord_t x, const lv_coord_t y)
     return move;
 }
 
-void select_move_direction(const lv_point_t* point)
+void select_move_direction(move_confg_t move)
 {
     lv_my_demo_game_2048_t* ctx = &lv_my_demo_game_2048_x;
-    lv_coord_t diff_x = point->x - ctx->point.x;
-    lv_coord_t diff_y = point->y - ctx->point.y;
     bool flag = false;
     printf_num_s(ctx->num_data);
-    switch (move_direction_select(diff_x, diff_y))
+    switch (move)
     {
     case LEFT_MOVE:
+    case LEFT_KEY:
         LV_LOG("LEFT_MOVE\n");
         flag = left_move_view(ctx->num_data, ctx->num_size, 0);
         break;
     case RIGHT_MOVE:
+    case RIGHT_KEY:
         LV_LOG("RIGHT_MOVE\n");
         flag = right_move_view(ctx->num_data, ctx->num_size, 0);
         break;
     case UP_MOVE:
+    case UP_KEY:
         LV_LOG("UP_MOVE\n");
         flag = up_move_view(ctx->num_data, ctx->num_size, 0);
         break;
     case DOWN_MOVE:
+    case DOWN_KEY:
         LV_LOG("DOWN_MOVE\n");
         flag = down_move_view(ctx->num_data, ctx->num_size, 0);
         break;
@@ -342,15 +356,16 @@ void select_move_direction(const lv_point_t* point)
 
 void game_move_select(lv_event_t * e)
 {
-    lv_my_demo_game_2048_t* ctx = &lv_my_demo_game_2048_x;
+    lv_my_demo_game_2048_t* ctx = lv_event_get_user_data(e);
     lv_obj_t* obj = lv_event_get_target(e);
     lv_event_code_t event = lv_event_get_code(e);
-    lv_indev_t * indev = lv_indev_get_act();
+    lv_indev_t* indev = lv_indev_get_act();
     lv_point_t* point;
     switch (event)
     {
         case LV_EVENT_KEY:
             LV_LOG("LV_EVENT_KEY\n");
+            select_move_direction(lv_indev_get_key(indev));
             break;
         case LV_EVENT_PRESSED:
             lv_indev_get_point(indev, point);
@@ -359,7 +374,9 @@ void game_move_select(lv_event_t * e)
             break;
         case LV_EVENT_RELEASED:
             lv_indev_get_point(indev, point);
-            select_move_direction(point);
+            lv_coord_t diff_x = point->x - ctx->point.x;
+            lv_coord_t diff_y = point->y - ctx->point.y;
+            select_move_direction(move_direction_select(diff_x, diff_y));
             break;
         default:
             break;
@@ -398,6 +415,11 @@ void lv_my_demo_game(void)
 {
     lv_my_demo_game_2048_t* ctx = &lv_my_demo_game_2048_x;
     lv_obj_t* obj = lv_obj_create(lv_scr_act());
+
+    ctx->g = lv_group_create();
+    lv_group_set_default(ctx->g);
+    lv_indev_set_group(lv_win32_keypad_device_object, ctx->g);     // 键盘
+
     srand(time(NULL));
     lv_obj_set_size(obj, LV_PCT(100), LV_PCT(100));
     ctx->num_size = sizeof(ctx->num_data)/sizeof(ctx->num_data[0]);
@@ -408,6 +430,7 @@ void lv_my_demo_game(void)
     lv_obj_set_size(ctx->view, LV_PCT(70), LV_PCT(70));
     lv_obj_align(ctx->view, LV_ALIGN_CENTER, 0, 0);
     view_obj_init(ctx->view);
-    lv_obj_add_event_cb(ctx->view, game_move_select, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ctx->view, game_move_select, LV_EVENT_ALL, ctx);
+    lv_group_add_obj(ctx->g, ctx->view);
 }
 #endif
